@@ -11,6 +11,12 @@ void Loco::Deserialize(void)
 {
 }
 
+void Loco::ReadBin(fs::File LocoFile)
+{
+   BinSize = LocoFile.size();
+   LocoFile.read(BinData, BinSize);
+}
+
 void Loco::Write2Cs2(FILE *LokCs2Stream)
 {  unsigned int i;
 

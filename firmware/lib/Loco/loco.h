@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <I2C_eeprom.h>
+#include <FS.h>
 
 #define LOCO_NUM_FUNCTIONS 32
 
@@ -26,6 +27,7 @@ class Loco
    public:
       void Serialize(void);
       void Deserialize(void);
+      void ReadBin(fs::File LocoFile);
       void Write2Cs2(FILE *LokCs2Stream);
       // set properties
       void SetBinSize(unsigned int Val) { BinSize = Val; };
