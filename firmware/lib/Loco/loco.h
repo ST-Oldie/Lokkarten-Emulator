@@ -1,6 +1,7 @@
 #ifndef LOCO_H
 #define LOCO_H
 
+#include <stdio.h>
 #include <string.h>
 #include <I2C_eeprom.h>
 
@@ -25,6 +26,7 @@ class Loco
    public:
       void Serialize(void);
       void Deserialize(void);
+      void Write2Cs2(FILE *LokCs2Stream);
       // set properties
       void SetBinSize(unsigned int Val) { BinSize = Val; };
       void SetUid(uint32_t Val)         { Uid = Val; };
@@ -41,6 +43,7 @@ class Loco
       void SetVmax(uint16_t Val)        { Vmax = Val; };
       void SetVmin(uint16_t Val)        { Vmin = Val; };
       // set properties for loco functions
+      void SetNumFkts(unsigned int Val) { NumFkts = Val; };
       void SetFktTyp(unsigned int Idx, uint16_t Val)   { Fkt[Idx].Typ = Val; };
       void SetFktDauer(unsigned int Idx, uint16_t Val) { Fkt[Idx].Dauer = Val; };
       void SetFktWert(unsigned int Idx, uint16_t Val)  { Fkt[Idx].Wert = Val; };
@@ -57,17 +60,20 @@ class Loco
       uint16_t GetBv(void)           { return Bv; };
       uint16_t GetVolume(void)       { return Volume; };
       uint16_t GetVelocity(void)     { return Velocity; };
-      uint16_t GetRichtung(void)     { return Direction; };
+      uint16_t GetDirection(void)    { return Direction; };
       uint16_t GetVmax(void)         { return Vmax; };
       uint16_t GetVmin(void)         { return Vmin; };
       // get properties for loco functions
+      unsigned int GetNumFkts(void)          { return NumFkts; };
       uint16_t GetFktTyp(unsigned int Idx)   { return Fkt[Idx].Typ; };
       uint16_t GetFktDauer(unsigned int Idx) { return Fkt[Idx].Dauer; };
       uint16_t GetFktWert(unsigned int Idx)  { return Fkt[Idx].Wert; };
 
    private:
+      // loco as binary data how it is stored on I2C memory
       uint8_t BinData[I2C_DEVICESIZE_24LC64];
       unsigned int BinSize;
+      // decoded loco information
       uint32_t Uid;
       char Name[17];
       uint16_t Adresse;
@@ -81,6 +87,7 @@ class Loco
       uint16_t Direction;
       uint16_t Vmax;
       uint16_t Vmin;
+      unsigned int NumFkts;
       LokFktTyp Fkt[LOCO_NUM_FUNCTIONS];
 };
 

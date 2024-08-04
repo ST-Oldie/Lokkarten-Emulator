@@ -1,0 +1,21 @@
+@startuml Lokkartenemulator
+
+class LocoCard {
+  I2C_eeprom *Fram
+  boolean CardIsInserted
+  boolean IsConnectedToCpu
+  void InsertCard(void)
+  void RemoveCard(void)
+  boolean IsInserted(void)
+  void ConnectToCpu(boolean Connect)
+  boolean IsConnected(void)
+  boolean LoadCard(const char *Loco, unsigned int Size)
+}
+
+class loco {
+   void Serialize(void)
+   void Deserialize(void)
+   void Write2Cs2(FILE *LokCs2Stream)
+}
+
+@enduml

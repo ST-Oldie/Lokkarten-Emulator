@@ -5,6 +5,14 @@
 #include <loco.h>
 #include "BR_xx.h"
 
+/**
+* @mainpage Lokkartenemulator
+*
+* Firmware f&uuml;r die Hardware des Lokkarten-Emulators
+*
+* @author Michael Bernstein
+*/
+
 #define SPI_MISO    12
 #define SPI_MOSI    13
 #define SPI_CLK     14

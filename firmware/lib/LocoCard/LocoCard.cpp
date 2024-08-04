@@ -54,10 +54,11 @@ boolean LocoCard::IsConnected(void)
 boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
 {  boolean ret;
 
-   ConnectToCpu(true);
+   if (!IsConnectedToCpu)
+      digitalWrite(I2C_Select, 1);
    if (Fram->isConnected())
    {
-      if (Fram->writeBlock(0, (const uint8_t *)Loco, Size) == 0)
+      if (Fram->writeBlock(0, Loco, Size) == 0)
       {
          ret = true;
       }
@@ -70,6 +71,7 @@ boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
    {
       ret = false;
    }
-   ConnectToCpu(false);
+   if (!IsConnectedToCpu)
+      digitalWrite(I2C_Select, 0);
    return(ret);
 }
