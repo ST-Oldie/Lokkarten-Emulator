@@ -51,13 +51,13 @@ boolean LocoCard::IsConnected(void)
    return IsConnectedToCpu;
 }
 
-boolean LocoCard::LoadCard(const uint8_t *Loco, uint16_t Size)
+boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
 {  boolean ret;
 
    ConnectToCpu(true);
    if (Fram->isConnected())
    {
-      if (Fram->writeBlock(0, Loco, Size) == 0)
+      if (Fram->writeBlock(0, (const uint8_t *)Loco, Size) == 0)
       {
          ret = true;
       }

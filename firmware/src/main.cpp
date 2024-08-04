@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <SD.h>
 #include <LocoCard.h>
+#include <loco.h>
 #include "BR_xx.h"
 
 #define SPI_MISO    12
@@ -11,18 +12,19 @@
 
 #define LOCO_SIZE   272
 
-uint8_t ee_buffer[LOCO_SIZE];
 uint8_t loco_id = 10;
 int sd_card;
 File root;
 LocoCard VirtLokKarte;
+Loco Lokomotive;
 
 /* Test with simple BIN File of BR86 */
 void copy_loco_data(){
   uint16_t i;
   for (i = 0; i < LOCO_SIZE; i++) {
-    ee_buffer[i] = pgm_read_byte_far(&BR86_bin[i]);
+    Lokomotive.GetBinData()[i] = pgm_read_byte_far(&BR86_bin[i]);
   }
+  Lokomotive.SetBinSize(LOCO_SIZE);
 }
 
 void printDirectory(File dir, int numTabs) {
@@ -76,7 +78,7 @@ void setup() {
     }
   }
 
-  if (!VirtLokKarte.LoadCard(ee_buffer, LOCO_SIZE))
+  if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData(), Lokomotive.GetBinSize()))
     Serial.println("load loco to fram failed");
 }
 
@@ -87,15 +89,15 @@ void loop() {
   loco_id = loco_id +1;
   if (loco_id > 70)
      loco_id = 10;
-  ee_buffer[246]++;
-  if (ee_buffer[246] > 0x39) {
-    ee_buffer[246]=0x30;
+  Lokomotive.GetBinData()[246]++;
+  if (Lokomotive.GetBinData()[246] > 0x39) {
+    Lokomotive.GetBinData()[246]=0x30;
   }
-  ee_buffer[5]=loco_id;
-  ee_buffer[11]=loco_id;
+  Lokomotive.GetBinData()[5]=loco_id;
+  Lokomotive.GetBinData()[11]=loco_id;
   Serial.printf("Loco ID: %d\n", loco_id);
   VirtLokKarte.RemoveCard();
-  if (!VirtLokKarte.LoadCard(ee_buffer, LOCO_SIZE))
+  if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData(), Lokomotive.GetBinSize()))
     Serial.println("load loco to fram failed");
   Serial.println("Card Change");
   delay(500);

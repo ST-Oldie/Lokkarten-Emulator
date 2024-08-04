@@ -1,5 +1,5 @@
-#ifndef LOCO_CARD
-#define LOCO_CARD
+#ifndef LOCO_CARD_H
+#define LOCO_CARD_H
 
 #include <I2C_eeprom.h>
 
@@ -13,7 +13,7 @@ class LocoCard
       boolean IsInserted(void);
       void ConnectToCpu(boolean Connect);
       boolean IsConnected(void);
-      boolean LoadCard(const uint8_t *Loco, uint16_t Size);
+      boolean LoadCard(const uint8_t *Loco, unsigned int Size);
 
    private:
       I2C_eeprom *Fram;
