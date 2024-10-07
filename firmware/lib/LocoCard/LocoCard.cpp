@@ -2,6 +2,12 @@
 #include <Wire.h>
 #include "LocoCard.h"
 
+/**
+* @addtogroup LOCO_CARD
+*
+* @{
+*/
+
 #define I2C_Select   2
 #define I2C_SDA      4
 #define I2C_SCL      5
@@ -73,7 +79,7 @@ void LocoCard::DisconnectFromCpu(void)
    digitalWrite(I2C_Select, 0);
 }
 
-boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
+boolean LocoCard::LoadCard(const uint8_t *Loco)
 {  boolean ret;
    ConnectionType OldConnection;
 
@@ -86,7 +92,7 @@ boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
    if (isConnected())
    {
       // fram is connected to cpu, write content of loco card
-      if (writeBlock(0, Loco, Size) == 0)
+      if (writeBlock(0, Loco, I2C_DEVICESIZE_24LC64) == 0)
       {
          ret = true;
       }
@@ -103,3 +109,5 @@ boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
    SetConnection(OldConnection);
    return(ret);
 }
+
+/** @} */

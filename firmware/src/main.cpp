@@ -19,6 +19,7 @@
 #define SPI_CS      15
 
 #define LOCO_SIZE   272
+#define FS_PATH     "/LocoCards"
 
 uint8_t loco_id = 10;
 int sd_card;
@@ -31,7 +32,6 @@ int UserCmd;
 void copy_loco_data()
 {  uint16_t i;
 
-   Lokomotive.SetBinSize(LOCO_SIZE);
    for (i = 0; i < LOCO_SIZE; i++)
    {
       Lokomotive.GetBinData()[i] = pgm_read_byte_far(&BR86_bin[i]);
@@ -79,7 +79,7 @@ void read_sd_card(void)
    }
    if (sd_card)
    {
-      root = SD.open("/LocoCards");
+      root = SD.open(FS_PATH);
       if (root)
       {
          printDirectory(root, 0);
@@ -91,35 +91,51 @@ void read_sd_card(void)
    }
 }
 
+void empty_card(void)
+{
+   Lokomotive.SetEmpty();
+}
+
+void insert_card(void)
+{
+   if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData()))
+      Serial.println("load loco to fram failed");
+   else
+      VirtLokKarte.SetConnection(Connected2Ms2);
+}
+
+void remove_card(void)
+{
+   VirtLokKarte.SetConnection(Disconnected);
+}
+
+void read_loco(void)
+{  String LokFileName;
+
+   Serial.print("Dateiname: ");
+   LokFileName = Serial.readString();
+   Lokomotive.ReadBin(SD.open(LokFileName, FILE_READ));
+}
+
+void write_loco(void)
+{  String LokFileName;
+
+   Serial.print("Dateiname: ");
+   LokFileName = Serial.readString();
+   Lokomotive.WriteBin(SD.open(LokFileName, FILE_WRITE));
+}
+
 void print_menu(void)
 {
    Serial.println("Lokkartenemulator");
-   Serial.println("1 - Test von Gerd");
-   Serial.println("2 - Read SD Karte");
+   Serial.println("1 - Read SD Karte");
+   Serial.println("2 - empty loco card");
+   Serial.println("3 - insert loco card");
+   Serial.println("4 - remove loco card");
+   Serial.println("5 - read loco");
+   Serial.println("6 - write loco");
+   Serial.println("7 - init loco with dummy");
    Serial.print("> ");
-}
-
-void do_gb_test(void)
-{
-   Serial.println("Cycle");
-   delay(2000);
-   loco_id = loco_id +1;
-   if (loco_id > 70)
-      loco_id = 10;
-   Lokomotive.GetBinData()[246]++;
-   if (Lokomotive.GetBinData()[246] > 0x39)
-   {
-      Lokomotive.GetBinData()[246]=0x30;
-   }
-   Lokomotive.GetBinData()[5]=loco_id;
-   Lokomotive.GetBinData()[11]=loco_id;
-   Serial.printf("Loco ID: %d\n", loco_id);
-   VirtLokKarte.SetConnection(Connected2Cpu);
-   if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData(), Lokomotive.GetBinSize()))
-      Serial.println("load loco to fram failed");
-   Serial.println("Card Change");
-   delay(500);
-   VirtLokKarte.SetConnection(Connected2Ms2);
 }
 
 void setup()
@@ -130,11 +146,7 @@ void setup()
    Serial.println("Serial EEPROM version:");
    Serial.println(I2C_EEPROM_VERSION);
 
-   copy_loco_data();
-
-   read_sd_card();
-
-   if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData(), Lokomotive.GetBinSize()))
+   if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData()))
       Serial.println("load loco to fram failed");
 
    print_menu();
@@ -148,10 +160,25 @@ void loop()
       switch (UserCmd)
       {
          case '1':
-            do_gb_test();
+            read_sd_card();
             break;
          case '2':
-            read_sd_card();
+            empty_card();
+            break;
+         case '3':
+            insert_card();
+            break;
+         case '4':
+            remove_card();
+            break;
+         case '5':
+            read_loco();
+            break;
+         case '6':
+            write_loco();
+            break;
+         case '7':
+            copy_loco_data();
             break;
       }
       print_menu();

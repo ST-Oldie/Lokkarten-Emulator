@@ -6,31 +6,56 @@
 #include <I2C_eeprom.h>
 #include <FS.h>
 
+/**
+ * @defgroup LOCO class for hold data of a loco
+ *
+ * @{
+ */
+
+/**
+* @brief number of functions (light, ...)
+*/
 #define LOCO_NUM_FUNCTIONS 32
 
+/**
+* @brief struct for one loco function
+*/
 typedef struct {
    uint16_t Typ;
    uint16_t Dauer;
    uint16_t Wert;
 } LokFktTyp;
 
+/**
+* @brief macros to set values in LokFktTyp
+*/
 #define LokFktSetTyp(Data, Val)   (Data)->Typ=Val
 #define LokFktSetDauer(Data, Val) (Data)->Dauer=Val
 #define LokFktSetWert(Data, Val)  (Data)->Wert=Val
 
+/**
+* @brief macros to get values from LokFktTyp
+*/
 #define LokFktGetTyp(Data, Val)   (Data)->Typ
 #define LokFktGetDauer(Data, Val) (Data)->Dauer
 #define LokFktGetWert(Data, Val)  (Data)->Wert
 
+/**
+* @brief class for hold information of a loco
+*/
 class Loco
 {
    public:
+      Loco();
+
+      boolean IsEmpty(void);
+      void SetEmpty(void);
       void Serialize(void);
       void Deserialize(void);
-      void ReadBin(fs::File LocoFile);
+      boolean ReadBin(fs::File LocoFile);
+      boolean WriteBin(fs::File LocoFile);
       void Write2Cs2(FILE *LokCs2Stream);
       // set properties
-      void SetBinSize(unsigned int Val) { BinSize = Val; };
       void SetUid(uint32_t Val)         { Uid = Val; };
       void SetName(char *Val)           { strcpy(Name, Val); };
       void SetAdresse(uint16_t Val)     { Adresse = Val; };
@@ -51,7 +76,6 @@ class Loco
       void SetFktWert(unsigned int Idx, uint16_t Val)  { Fkt[Idx].Wert = Val; };
       // get properties
       uint8_t *GetBinData(void)      { return BinData; };
-      unsigned int GetBinSize(void)  { return BinSize; };
       uint32_t GetUid(void)          { return Uid; };
       char *GetName(void)            { return Name; };
       uint16_t GetAdresse(void)      { return Adresse; };
@@ -74,7 +98,7 @@ class Loco
    private:
       // loco as binary data how it is stored on I2C memory
       uint8_t BinData[I2C_DEVICESIZE_24LC64];
-      unsigned int BinSize;
+      boolean LocoIsEmpty;
       // decoded loco information
       uint32_t Uid;
       char Name[17];
@@ -92,5 +116,7 @@ class Loco
       unsigned int NumFkts;
       LokFktTyp Fkt[LOCO_NUM_FUNCTIONS];
 };
+
+/** @} */
 
 #endif

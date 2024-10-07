@@ -3,6 +3,28 @@
 #include "loco.h"
 #include "loco.h"
 
+/**
+* @addtogroup LOCO
+*
+* @{
+*/
+
+Loco::Loco()
+{
+   SetEmpty();
+}
+
+boolean Loco::IsEmpty(void)
+{
+   return(LocoIsEmpty);
+}
+
+void Loco::SetEmpty(void)
+{
+   memset(BinData, 0xff, I2C_DEVICESIZE_24LC64);
+   LocoIsEmpty = true;
+}
+
 void Loco::Serialize(void)
 {
 }
@@ -11,10 +33,37 @@ void Loco::Deserialize(void)
 {
 }
 
-void Loco::ReadBin(fs::File LocoFile)
-{
+boolean Loco::ReadBin(fs::File LocoFile)
+{  size_t BinSize;
+   boolean Ret;
+
    BinSize = LocoFile.size();
-   LocoFile.read(BinData, BinSize);
+   if (BinSize > I2C_DEVICESIZE_24LC64)
+   {
+      Ret = false;
+   }
+   else
+   {
+      Ret = LocoFile.read(BinData, BinSize) != (int)BinSize;
+      LocoFile.close();
+      if (!Ret)
+      {
+         SetEmpty();
+      }
+      else
+      {
+         LocoIsEmpty = false;
+      }
+   }
+   return(Ret);
+}
+
+boolean Loco::WriteBin(fs::File LocoFile)
+{  boolean Ret;
+
+   Ret = LocoFile.write(BinData, I2C_DEVICESIZE_24LC64) == I2C_DEVICESIZE_24LC64;
+   LocoFile.close();
+   return(Ret);
 }
 
 void Loco::Write2Cs2(FILE *LokCs2Stream)
@@ -61,3 +110,5 @@ void Loco::Write2Cs2(FILE *LokCs2Stream)
    }
    Cs2WriteHexLongValueByName(LokCs2Stream, CS2_FILE_VALUE_STRING_INTRAKTION, 0xffffffff, 1);
 }
+
+/** @} */
