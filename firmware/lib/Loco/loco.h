@@ -48,13 +48,13 @@ class Loco
    public:
       Loco();
 
-      boolean IsEmpty(void);
-      void SetEmpty(void);
-      void Serialize(void);
-      void Deserialize(void);
-      boolean ReadBin(fs::File LocoFile);
-      boolean WriteBin(fs::File LocoFile);
-      void Write2Cs2(FILE *LokCs2Stream);
+      boolean IsEmpty(void);               /** returns, if loco is empty */
+      void SetEmpty(void);                 /** set loco to empty (all bytes to 0xff) */
+      void Serialize(void);                /** convert loco info to bin image */
+      void Deserialize(void);              /** convert bin image to loco info */
+      boolean ReadBin(fs::File LocoFile);  /** read binary image file */
+      boolean WriteBin(fs::File LocoFile); /** write binary iameg file */
+      void Write2Cs2(fs::File LocoFile);   /** write loco info as lokomotive.cs2 snippet */
       // set properties
       void SetUid(uint32_t Val)         { Uid = Val; };
       void SetName(char *Val)           { strcpy(Name, Val); };
@@ -97,8 +97,8 @@ class Loco
 
    private:
       // loco as binary data how it is stored on I2C memory
-      uint8_t BinData[I2C_DEVICESIZE_24LC64];
-      boolean LocoIsEmpty;
+      uint8_t BinData[I2C_DEVICESIZE_24LC64]; /** binary image fie data */
+      boolean LocoIsEmpty;                    /** is BinData set to empty (all bytes to 0xff) */
       // decoded loco information
       uint32_t Uid;
       char Name[17];

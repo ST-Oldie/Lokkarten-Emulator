@@ -1,11 +1,7 @@
 #ifndef CS2_WRITE_H
 #define CS2_WRITE_H
 
-#ifdef __cpluplus
-extern "C" {
-#endif
-
-#include <stdio.h>
+#include <FS.h>
 
 /** @file
  *
@@ -179,23 +175,16 @@ extern "C" {
 #define CS2_GLEISBILD_TYP_STRING_DREHSCHEIBE_DIG_31 "drehscheibe_dig_31"
 
 
-char *Cs2GetTypAsString(int Typ);
-FILE *Cs2OpenByName(char *Name);
-void Cs2Close(FILE *Stream);
-void Cs2WriteParagraphByName(FILE *Stream, char *Paragraph);
-void Cs2WriteParagraphByType(FILE *Stream, int Cs2ParagraphType);
-void Cs2WriteTitleByName(FILE *Stream, const char *Title, int Level);
-void Cs2WriteStringValueByName(FILE *Stream, const char *Title, char *Value, int Level);
-void Cs2WriteIntValueByName(FILE *Stream, const char *Title, int Value, int Level);
-void Cs2WriteHexValueByName(FILE *Stream, const char *Title, int Value, int Level);
-void Cs2WriteULongValueByName(FILE *Stream, const char *Title, unsigned long Value, int Level);
-void Cs2WriteHexLongValueByName(FILE *Stream, const char *Title, unsigned long Value, int Level);
-void Cs2WriteFloatValueByName(FILE *Stream, const char *Title, float Value, int Level);
+void Cs2WriteParagraphByName(fs::File LocoFile, char *Paragraph);
+void Cs2WriteParagraphByType(fs::File LocoFile, int Cs2ParagraphType);
+void Cs2WriteTitleByName(fs::File LocoFile, const char *Title, int Level);
+void Cs2WriteStringValueByName(fs::File LocoFile, const char *Title, char *Value, int Level);
+void Cs2WriteIntValueByName(fs::File LocoFile, const char *Title, int Value, int Level);
+void Cs2WriteHexValueByName(fs::File LocoFile, const char *Title, int Value, int Level);
+void Cs2WriteULongValueByName(fs::File LocoFile, const char *Title, unsigned long Value, int Level);
+void Cs2WriteHexLongValueByName(fs::File LocoFile, const char *Title, unsigned long Value, int Level);
+void Cs2WriteFloatValueByName(fs::File LocoFile, const char *Title, float Value, int Level);
 
 /** @} */
-
-#ifdef __cpluplus
-}
-#endif
 
 #endif

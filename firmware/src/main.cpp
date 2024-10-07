@@ -111,18 +111,24 @@ void remove_card(void)
 
 void read_loco(void)
 {  String LokFileName;
+   fs::File LocoFile;
 
    Serial.print("Dateiname: ");
    LokFileName = Serial.readString();
-   Lokomotive.ReadBin(SD.open(LokFileName, FILE_READ));
+   LocoFile = SD.open(LokFileName, FILE_READ);
+   Lokomotive.ReadBin(LocoFile);
+   LocoFile.close();
 }
 
 void write_loco(void)
 {  String LokFileName;
+   fs::File LocoFile;
 
    Serial.print("Dateiname: ");
    LokFileName = Serial.readString();
-   Lokomotive.WriteBin(SD.open(LokFileName, FILE_WRITE));
+   LocoFile = SD.open(LokFileName, FILE_WRITE);
+   Lokomotive.WriteBin(LocoFile);
+   LocoFile.close();
 }
 
 void print_menu(void)
