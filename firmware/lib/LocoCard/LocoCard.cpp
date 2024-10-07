@@ -9,56 +9,84 @@
 #define I2C_ADDRESS  0x50
 #define Card_Change  16
 
-LocoCard::LocoCard()
+LocoCard::LocoCard(): I2C_eeprom(I2C_ADDRESS, I2C_DEVICESIZE_24LC64)
 {
    pinMode(Card_Change, OUTPUT);
    pinMode(I2C_Select, OUTPUT);
    Wire.begin(I2C_SDA, I2C_SCL);
    Wire.setClock(I2C_CLOCK);
    digitalWrite(Card_Change, 0);
-   CardIsInserted = false;
    digitalWrite(I2C_Select, 0);
-   IsConnectedToCpu = false;
-   Fram = new I2C_eeprom(I2C_ADDRESS, I2C_DEVICESIZE_24LC64);
-   Fram->begin();
+   ActualConnection = Disconnected;
+   begin();
+}
+
+void LocoCard::SetConnection(ConnectionType NewConnection)
+{
+   if (NewConnection != ActualConnection)
+   {
+      // first disconnect virtual loco card
+      if (ActualConnection == Connected2Cpu)
+      {
+         DisconnectFromCpu();
+      }
+      else if (ActualConnection == Connected2Ms2)
+      {
+         RemoveCard();
+      }
+      // then connect virtual loco card
+      if (NewConnection == Connected2Cpu)
+      {
+         ConnectToCpu();
+      }
+      else if (NewConnection == Connected2Ms2)
+      {
+         InsertCard();
+      }
+      // and store new connection status
+      ActualConnection = NewConnection;
+   }
+}
+
+ConnectionType LocoCard::GetConnection(void)
+{
+   return(ActualConnection);
 }
 
 void LocoCard::InsertCard(void)
 {
    digitalWrite(Card_Change, 1);
-   CardIsInserted = true;
 }
 
 void LocoCard::RemoveCard(void)
 {
    digitalWrite(Card_Change, 0);
-   CardIsInserted = false;
 }
 
-boolean LocoCard::IsInserted(void)
+void LocoCard::ConnectToCpu(void)
 {
-   return CardIsInserted;
+   digitalWrite(I2C_Select, 1);
 }
 
-void LocoCard::ConnectToCpu(boolean Connect)
+void LocoCard::DisconnectFromCpu(void)
 {
-   digitalWrite(I2C_Select, Connect?1:0);
-   IsConnectedToCpu = Connect;
-}
-
-boolean LocoCard::IsConnected(void)
-{
-   return IsConnectedToCpu;
+   digitalWrite(I2C_Select, 0);
 }
 
 boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
 {  boolean ret;
+   ConnectionType OldConnection;
 
-   if (!IsConnectedToCpu)
-      digitalWrite(I2C_Select, 1);
-   if (Fram->isConnected())
+   // store old conenction status and connect to cpu if not
+   OldConnection = ActualConnection;
+   if (OldConnection != Connected2Cpu)
    {
-      if (Fram->writeBlock(0, Loco, Size) == 0)
+      SetConnection(Connected2Cpu);
+   }
+   if (isConnected())
+   {
+      // fram is connected to cpu, write content of loco card
+      if (writeBlock(0, Loco, Size) == 0)
       {
          ret = true;
       }
@@ -71,7 +99,7 @@ boolean LocoCard::LoadCard(const uint8_t *Loco, unsigned int Size)
    {
       ret = false;
    }
-   if (!IsConnectedToCpu)
-      digitalWrite(I2C_Select, 0);
+   // restore old connection status
+   SetConnection(OldConnection);
    return(ret);
 }

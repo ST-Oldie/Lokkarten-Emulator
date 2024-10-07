@@ -3,22 +3,28 @@
 
 #include <I2C_eeprom.h>
 
-class LocoCard
+typedef enum ConnectionType {
+   Disconnected,
+   Connected2Cpu,
+   Connected2Ms2
+};
+
+class LocoCard: I2C_eeprom
 {
    public:
       LocoCard();
 
-      void InsertCard(void);
-      void RemoveCard(void);
-      boolean IsInserted(void);
-      void ConnectToCpu(boolean Connect);
-      boolean IsConnected(void);
+      void SetConnection(ConnectionType NewConnection);
+      ConnectionType GetConnection(void);
       boolean LoadCard(const uint8_t *Loco, unsigned int Size);
 
    private:
-      I2C_eeprom *Fram;
-      boolean CardIsInserted;
-      boolean IsConnectedToCpu;
+      ConnectionType ActualConnection;
+
+      void InsertCard(void);
+      void RemoveCard(void);
+      void ConnectToCpu(void);
+      void DisconnectFromCpu(void);
 };
 
 #endif

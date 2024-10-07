@@ -114,12 +114,12 @@ void do_gb_test(void)
    Lokomotive.GetBinData()[5]=loco_id;
    Lokomotive.GetBinData()[11]=loco_id;
    Serial.printf("Loco ID: %d\n", loco_id);
-   VirtLokKarte.RemoveCard();
+   VirtLokKarte.SetConnection(Connected2Cpu);
    if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData(), Lokomotive.GetBinSize()))
       Serial.println("load loco to fram failed");
    Serial.println("Card Change");
    delay(500);
-   VirtLokKarte.InsertCard();
+   VirtLokKarte.SetConnection(Connected2Ms2);
 }
 
 void setup()
