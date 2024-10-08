@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <SD.h>
+#include <LocoSet.h>
 #include <LocoCard.h>
 #include <loco.h>
 #include "BR_xx.h"
@@ -24,6 +25,7 @@
 uint8_t loco_id = 10;
 int sd_card;
 File root;
+LocoSet LokSatz;
 LocoCard VirtLokKarte;
 Loco Lokomotive;
 int UserCmd;
@@ -131,6 +133,32 @@ void write_loco(void)
    LocoFile.close();
 }
 
+void add_loco_to_set(void)
+{  String LokFileName;
+
+   Serial.print("Dateiname: ");
+   LokFileName = Serial.readString();
+   LokSatz.AddLocoFileName(LokFileName.c_str());
+}
+
+void insert_loco_set(void)
+{  char *LocoFileName;
+   fs::File LocoFile;
+
+   LocoFileName = LokSatz.begin();
+   while (LocoFileName != (char *)NULL)
+   {
+      LocoFile = SD.open(LocoFileName, FILE_READ);
+      Lokomotive.ReadBin(LocoFile);
+      LocoFile.close();
+      VirtLokKarte.SetConnection(Connected2Cpu);
+      VirtLokKarte.LoadCard(Lokomotive.GetBinData());
+      VirtLokKarte.SetConnection(Connected2Ms2);
+      delay(500);
+      LocoFileName = LokSatz.next();
+   }
+}
+
 void print_menu(void)
 {
    Serial.println("Lokkartenemulator");
@@ -141,6 +169,8 @@ void print_menu(void)
    Serial.println("5 - read loco");
    Serial.println("6 - write loco");
    Serial.println("7 - init loco with dummy");
+   Serial.println("8 - add loco to set");
+   Serial.println("8 - insert loco set");
    Serial.print("> ");
 }
 
@@ -185,6 +215,12 @@ void loop()
             break;
          case '7':
             copy_loco_data();
+            break;
+         case '8':
+            add_loco_to_set();
+            break;
+         case '9':
+            insert_loco_set();
             break;
       }
       print_menu();

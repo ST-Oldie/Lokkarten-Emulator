@@ -12,7 +12,7 @@
 /**
 * @brief enum for different types of how the FRAM is connected
 */
-typedef enum ConnectionType {
+enum ConnectionType {
    Disconnected,  /** FRAM is neither connected to CPU nor connected to MS2 */
    Connected2Cpu, /** FRAM is conencted to CPU */
    Connected2Ms2  /** FRAM is connected to MS2 */
