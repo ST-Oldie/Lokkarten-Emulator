@@ -1,12 +1,17 @@
 #include <string.h>
 #include <LocoSet.h>
 
-void LocoSet::EmptySet(void)
-{  std::set<char *>::iterator LocoSetIterator;
+/**
+* @addtogroup LOCO_SET
+*
+* @{
+*/
 
-   for (LocoSetIterator = LocoFileNames.begin(); LocoSetIterator != LocoFileNames.end(); ++LocoSetIterator)
+void LocoSet::EmptySet(void)
+{
+   for (LocoFileNamesItr = LocoFileNames.begin(); LocoFileNamesItr != LocoFileNames.end(); ++LocoFileNamesItr)
    {
-      free(*LocoSetIterator);
+      free(*LocoFileNamesItr);
    }
    LocoFileNames.clear();
 }
@@ -32,11 +37,10 @@ boolean LocoSet::ReadSet(fs::File LocoSetFile)
 }
 
 boolean LocoSet::WriteSet(fs::File LocoSetFile)
-{  std::set<char *>::iterator LocoSetIterator;
-
-   for (LocoSetIterator = LocoFileNames.begin(); LocoSetIterator != LocoFileNames.end(); ++LocoSetIterator)
+{
+   for (LocoFileNamesItr = LocoFileNames.begin(); LocoFileNamesItr != LocoFileNames.end(); ++LocoFileNamesItr)
    {
-      LocoSetFile.println(*LocoSetIterator);
+      LocoSetFile.println(*LocoFileNamesItr);
    }
    return(true);
 }
@@ -64,3 +68,5 @@ char *LocoSet::next(void)
       return((char *)NULL);
    }
 }
+
+/** @} */
