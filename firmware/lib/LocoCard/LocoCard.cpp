@@ -110,4 +110,35 @@ boolean LocoCard::LoadCard(const uint8_t *Loco)
    return(ret);
 }
 
+boolean LocoCard::UnloadCard(uint8_t *Loco)
+{  boolean ret;
+   ConnectionType OldConnection;
+
+   // store old conenction status and connect to cpu if not
+   OldConnection = ActualConnection;
+   if (OldConnection != Connected2Cpu)
+   {
+      SetConnection(Connected2Cpu);
+   }
+   if (isConnected())
+   {
+      // fram is connected to cpu, read content of loco card
+      if (readBlock(0, Loco, I2C_DEVICESIZE_24LC64) == 0)
+      {
+         ret = true;
+      }
+      else
+      {
+         ret = false;
+      }
+   }
+   else
+   {
+      ret = false;
+   }
+   // restore old connection status
+   SetConnection(OldConnection);
+   return(ret);
+}
+
 /** @} */

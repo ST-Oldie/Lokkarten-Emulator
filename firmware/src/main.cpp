@@ -108,6 +108,7 @@ void insert_card(void)
 
 void remove_card(void)
 {
+   VirtLokKarte.UnloadCard(Lokomotive.GetBinData());
    VirtLokKarte.SetConnection(Disconnected);
 }
 

@@ -29,6 +29,7 @@ class LocoCard: I2C_eeprom
       void SetConnection(ConnectionType NewConnection); /** connect to CPU od MS2 or disconnect */
       ConnectionType GetConnection(void);               /** get, how the FRAM was connected */
       boolean LoadCard(const uint8_t *Loco);            /** load binary data into the FRAM */
+      boolean UnloadCard(uint8_t *Loco);          /** read binary data from the FRAM */
 
    private:
       ConnectionType ActualConnection; /** is the loco card connected to ms2, cpu or not connected */
