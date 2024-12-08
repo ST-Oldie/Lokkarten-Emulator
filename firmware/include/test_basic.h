@@ -213,7 +213,7 @@ void test_basic_setup(void)
       Serial.println("initialization failed - no SD Card inserted ?");
    }
 
-   CfgReadIniConfig();
+//   CfgReadIniConfig();
 
    print_menu();
 }

@@ -5,7 +5,9 @@
 #define INI_FILE_LENGTH 80
 #define FS_PATH         "locos"
 
-char CfgFsPath[MAX_FS_PATH_LEN];
+extern "C" {
+
+//char CfgFsPath[MAX_FS_PATH_LEN];
 
 void CfgReadIniconfig(void)
 {  IniFile LcIni(INI_FILE_NAME);
@@ -22,4 +24,6 @@ void CfgReadIniconfig(void)
       }
       LcIni.close();
    }
+}
+
 }

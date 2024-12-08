@@ -3,8 +3,12 @@
 
 #define MAX_FS_PATH_LEN 255
 
-extern char CfgFsPath[MAX_FS_PATH_LEN];
+char CfgFsPath[MAX_FS_PATH_LEN];
+
+extern "C" {
 
 void CfgReadIniConfig(void);
+
+}
 
 #endif

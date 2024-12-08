@@ -32,7 +32,7 @@ Loco Lokomotive;
 
 void setup()
 {
-   CfgReadIniConfig();
+//   CfgReadIniConfig();
 #ifdef TEST_BASIC
    test_basic_setup();
 #endif
