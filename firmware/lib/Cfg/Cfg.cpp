@@ -3,7 +3,7 @@
 
 #define INI_FILE_NAME   "/lc.ini"
 #define INI_FILE_LENGTH 80
-#define FS_PATH         "locos"
+#define FS_PATH         "/locos/"
 
 extern "C" {
 
