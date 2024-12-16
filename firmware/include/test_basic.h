@@ -1,7 +1,10 @@
 #include "BR_xx.h"
+#include <stdio.h>
 
 #define LOCO_SIZE       272
-
+ 
+static uint8_t TestBinData[I2C_DEVICESIZE_24LC64];
+ 
 /* Test with simple BIN File of BR86 */
 void copy_loco_data()
 {  uint16_t i;
@@ -102,10 +105,16 @@ void read_sd_card(const char *Path)
 void empty_card(void)
 {
    Lokomotive.SetEmpty();
+   memcpy(TestBinData, Lokomotive.GetBinData(), I2C_DEVICESIZE_24LC64);
 }
 
 void insert_card(void)
-{
+{  char Buf[256];
+   int Erg;
+
+   Erg = memcmp((const void *)TestBinData, (const void *)Lokomotive.GetBinData(), I2C_DEVICESIZE_24LC64);
+   sprintf(Buf, "cmp = %d", Erg);
+   Serial.println(Buf);
    if (!VirtLokKarte.LoadCard(Lokomotive.GetBinData()))
       Serial.println("load loco to fram failed");
    else
@@ -113,37 +122,69 @@ void insert_card(void)
 }
 
 void remove_card(void)
-{
+{  char Buf[256];
+   int Erg;
+
    VirtLokKarte.UnloadCard(Lokomotive.GetBinData());
    VirtLokKarte.SetConnection(Disconnected);
+   Erg = memcmp((const void *)TestBinData, (const void *)Lokomotive.GetBinData(), I2C_DEVICESIZE_24LC64);
+   sprintf(Buf, "cmp = %d", Erg);
+   Serial.println(Buf);
+   memcpy(TestBinData, Lokomotive.GetBinData(), I2C_DEVICESIZE_24LC64);
 }
 
 void read_loco(void)
 {  char LokFileName[80], FullName[250];
    fs::File LocoFile;
+   char Buf[256];
+   int Erg;
 
    ReadFileName("Dateiname", LokFileName);
    strcpy(FullName, CfgFsPath);
-   strcat(FullName, "/");
+   if (FullName[strlen(FullName) - 1] != '/')
+   {
+      strcat(FullName, "/");
+   }
    strcat(FullName, LokFileName);
    Serial.println(FullName);
    LocoFile = SD.open(FullName, FILE_READ);
-   Lokomotive.ReadBin(LocoFile);
+   if (LocoFile)
+   {
+      if (!Lokomotive.ReadBin(LocoFile))
+      {
+         Serial.println("Fehler beim Lesen der Lok");
+      }
+   }
+   else
+   {
+      Serial.println("Fehler beim Öffnen der Lok");    
+   }
    LocoFile.close();
+   Erg = memcmp((const void *)TestBinData, (const void *)Lokomotive.GetBinData(), I2C_DEVICESIZE_24LC64);
+   sprintf(Buf, "cmp = %d", Erg);
+   Serial.println(Buf);
 }
 
 void write_loco(void)
 {  char LokFileName[80], FullName[250];
    fs::File LocoFile;
+   size_t Written;
+   char Output[80];
 
    ReadFileName("Dateiname", LokFileName);
    strcpy(FullName, CfgFsPath);
-   strcat(FullName, "/");
+   if (FullName[strlen(FullName) - 1] != '/')
+   {
+      strcat(FullName, "/");
+   }
    strcat(FullName, LokFileName);
    Serial.println(FullName);
+   SD.remove(FullName);
    LocoFile = SD.open(FullName, FILE_WRITE);
-   Lokomotive.WriteBin(LocoFile);
+   Written = Lokomotive.WriteBin(LocoFile);
    LocoFile.close();
+   sprintf(Output, "Written %d Bytes", (int)Written);
+   Serial.println(Output);
 }
 
 void add_loco_to_set(void)
@@ -183,9 +224,10 @@ void chg_dir(void)
       if (!SD.mkdir(CfgFsPath))
       {
          Serial.print("can not create ");
-         Serial.println(CfgFsPath);
       }
    }
+   Serial.print("Neuer Pfad: ");
+   Serial.println(CfgFsPath);
 }
 
 void print_menu(void)
