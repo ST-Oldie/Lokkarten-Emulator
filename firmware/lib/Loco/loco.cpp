@@ -1,3 +1,4 @@
+#include <HardwareSerial.h>
 #include <cs2_write.h>
 #include <cs2_file.h>
 #include "loco.h"
@@ -38,13 +39,13 @@ boolean Loco::ReadBin(fs::File LocoFile)
    boolean Ret;
 
    BinSize = LocoFile.size();
-   if (BinSize > I2C_DEVICESIZE_24LC64)
+   if (BinSize != I2C_DEVICESIZE_24LC64)
    {
       Ret = false;
    }
    else
    {
-      Ret = LocoFile.read(BinData, BinSize) != (int)BinSize;
+      Ret = LocoFile.read(BinData, BinSize) == (int)BinSize;
       if (!Ret)
       {
          SetEmpty();
@@ -58,10 +59,10 @@ boolean Loco::ReadBin(fs::File LocoFile)
 }
 
 boolean Loco::WriteBin(fs::File LocoFile)
-{  boolean Ret;
+{  size_t Written;
 
-   Ret = LocoFile.write(BinData, I2C_DEVICESIZE_24LC64) == I2C_DEVICESIZE_24LC64;
-   return(Ret);
+   Written = LocoFile.write(BinData, I2C_DEVICESIZE_24LC64);
+   return(Written == I2C_DEVICESIZE_24LC64);
 }
 
 void Loco::Write2Cs2(fs::File LocoFile)
