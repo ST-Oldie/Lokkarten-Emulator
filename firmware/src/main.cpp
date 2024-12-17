@@ -25,6 +25,7 @@
 LocoSet LokSatz;
 LocoCard VirtLokKarte;
 Loco Lokomotive;
+Cfg Config;
 
 #ifdef TEST_BASIC
 #include "test_basic.h"
@@ -32,7 +33,7 @@ Loco Lokomotive;
 
 void setup()
 {
-//   CfgReadIniConfig();
+   Config.ReadIniconfig();
 #ifdef TEST_BASIC
    test_basic_setup();
 #endif

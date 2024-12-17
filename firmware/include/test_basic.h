@@ -75,18 +75,24 @@ void printDirectory(File dir, int numTabs)
    }
 }
 
-void read_sd_card(const char *Path)
+void read_sd_card(void)
 {  File root;
+   char *Path;
 
-   if (!SD.exists(Path))
+   Path = Config.GetCfgVal(CFG_VALUE_LOCO_PATH);
+   Serial.println(Path);
+   if (strcmp(Path, "/") != 0)
    {
-      Serial.print("directory ");
-      Serial.print(Path);
-      Serial.println(" not exist, create");
-      if (!SD.mkdir(Path))
+      if (!SD.exists(Path))
       {
-         Serial.print("can not create ");
-         Serial.println(Path);
+         Serial.print("directory ");
+         Serial.print(Path);
+         Serial.println(" not exist, create");
+         if (!SD.mkdir(Path))
+         {
+            Serial.print("can not create ");
+            Serial.println(Path);
+         }
       }
    }
    root = SD.open(Path);
@@ -140,7 +146,7 @@ void read_loco(void)
    int Erg;
 
    ReadFileName("Dateiname", LokFileName);
-   strcpy(FullName, CfgFsPath);
+   strcpy(FullName, Config.GetCfgVal(CFG_VALUE_LOCO_PATH));
    if (FullName[strlen(FullName) - 1] != '/')
    {
       strcat(FullName, "/");
@@ -172,7 +178,7 @@ void write_loco(void)
    char Output[80];
 
    ReadFileName("Dateiname", LokFileName);
-   strcpy(FullName, CfgFsPath);
+   strcpy(FullName, Config.GetCfgVal(CFG_VALUE_LOCO_PATH));
    if (FullName[strlen(FullName) - 1] != '/')
    {
       strcat(FullName, "/");
@@ -214,20 +220,24 @@ void insert_loco_set(void)
 }
 
 void chg_dir(void)
-{
-   ReadFileName("SD Card Path: ", CfgFsPath);
-   if (!SD.exists(CfgFsPath))
+{  char CfgFsPath[255];
+
+   ReadFileName("SD Card Path", CfgFsPath);
+   Config.SetCfgVal(CFG_VALUE_LOCO_PATH, CfgFsPath);
+   Config.WriteIniconfig();
+   if (strcmp(CfgFsPath, "/") != 0)
    {
-      Serial.print("directory ");
-      Serial.print(CfgFsPath);
-      Serial.println(" not exist, create");
-      if (!SD.mkdir(CfgFsPath))
+      if (!SD.exists(CfgFsPath))
       {
-         Serial.print("can not create ");
+         Serial.print("directory ");
+         Serial.print(CfgFsPath);
+         Serial.println(" not exist, create");
+         if (!SD.mkdir(CfgFsPath))
+         {
+            Serial.print("can not create ");
+        }
       }
    }
-   Serial.print("Neuer Pfad: ");
-   Serial.println(CfgFsPath);
 }
 
 void print_menu(void)
@@ -254,9 +264,6 @@ void test_basic_setup(void)
    {
       Serial.println("initialization failed - no SD Card inserted ?");
    }
-
-//   CfgReadIniConfig();
-
    print_menu();
 }
 
@@ -269,7 +276,7 @@ void test_basic_loop(void)
       switch (UserCmd)
       {
          case '1':
-            read_sd_card(CfgFsPath);
+            read_sd_card();
             break;
          case '2':
             empty_card();
@@ -297,6 +304,8 @@ void test_basic_loop(void)
             break;
          case 'a':
             chg_dir();
+   Serial.print("Neuer Pfad: ");
+   Serial.println(Config.GetCfgVal(CFG_VALUE_LOCO_PATH));
             break;
       }
       print_menu();
