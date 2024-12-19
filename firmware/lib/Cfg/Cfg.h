@@ -5,6 +5,8 @@
 
 #define MAX_FS_PATH_LEN 255
 #define CFG_VALUE_LOCO_PATH "path"
+#define CFG_VALUE_SSID      "ssid"
+#define CFG_VALUE_PASSWORD  "password"
 
 class Cfg
 {

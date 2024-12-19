@@ -21,16 +21,28 @@ void Cfg::ReadIniconfig(void)
             CfgValues[CFG_VALUE_LOCO_PATH] = strdup(buffer);
          else
             CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
+         if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_SSID, buffer, sizeof(buffer)))
+            CfgValues[CFG_VALUE_SSID] = strdup(buffer);
+         else
+            CfgValues[CFG_VALUE_SSID] = (char *)NULL;
+         if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_PASSWORD, buffer, sizeof(buffer)))
+            CfgValues[CFG_VALUE_PASSWORD] = strdup(buffer);
+         else
+            CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
       }
       else
       {
          CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
+         CfgValues[CFG_VALUE_SSID] = (char *)NULL;
+         CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
       }
       LcIni.close();
    }
    else
    {
       CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
+      CfgValues[CFG_VALUE_SSID] = (char *)NULL;
+      CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
    }
 }
 
@@ -40,6 +52,11 @@ void Cfg::WriteIniconfig(void)
    CfgFile = SD.open(INI_FILE_NAME, FILE_WRITE);
    CfgFile.printf("[%s]\n", CFG_SECTION_LOCOCARD);
    CfgFile.printf("%s=%s\n", CFG_VALUE_LOCO_PATH, CfgValues[CFG_VALUE_LOCO_PATH]);
+   CfgFile.printf("[%s]\n", CFG_SECTION_WLAN);
+   if (CfgValues[CFG_VALUE_SSID] != (char *)NULL)
+      CfgFile.printf("%s=%s\n", CFG_VALUE_SSID, CfgValues[CFG_VALUE_SSID]);
+   if (CfgValues[CFG_VALUE_PASSWORD] != (char *)NULL)
+      CfgFile.printf("%s=%s\n", CFG_VALUE_PASSWORD, CfgValues[CFG_VALUE_PASSWORD]);
    CfgFile.close();
 }
 
@@ -53,6 +70,7 @@ void Cfg::SetCfgVal(char *Key, char *Value)
 
    OldVal = CfgValues[Key];
    CfgValues.erase(Key);
-   free((void *)OldVal);
+   if (OldVal != (char *)NULL)
+      free((void *)OldVal);
    CfgValues[Key] = strdup(Value);
 }
