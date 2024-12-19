@@ -269,10 +269,16 @@ switch (c)
       ConfigValue = "";
       break;
    case 1:
-      ConfigValue = Config.GetCfgVal(CFG_VALUE_SSID);
+      if (Config.GetCfgVal(CFG_VALUE_SSID) != (char *)NULL)
+         ConfigValue = Config.GetCfgVal(CFG_VALUE_SSID);
+      else
+         ConfigValue = "";
       break;
    case 2:
-      ConfigValue = Config.GetCfgVal(CFG_VALUE_PASSWORD);
+      if (Config.GetCfgVal(CFG_VALUE_PASSWORD) != (char *)NULL)
+         ConfigValue = Config.GetCfgVal(CFG_VALUE_PASSWORD);
+      else
+         ConfigValue = "";
       break;
 }
     // set background color by the status of the configuration value
