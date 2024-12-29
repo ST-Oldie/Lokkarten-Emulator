@@ -74,3 +74,13 @@ void Cfg::SetCfgVal(char *Key, char *Value)
       free((void *)OldVal);
    CfgValues[Key] = strdup(Value);
 }
+
+void Cfg::SetCfgVal(char *Key, String Value)
+{  char *OldVal;
+
+   OldVal = CfgValues[Key];
+   CfgValues.erase(Key);
+   if (OldVal != (char *)NULL)
+      free((void *)OldVal);
+   CfgValues[Key] = strdup(Value.c_str());
+}
