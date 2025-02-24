@@ -79,7 +79,7 @@ void read_sd_card(void)
 {  File root;
    char *Path;
 
-   Path = Config.GetCfgVal(CFG_VALUE_LOCO_PATH);
+   Path = Config->GetCfgVal(CFG_VALUE_LOCO_PATH);
    Serial.println(Path);
    if (strcmp(Path, "/") != 0)
    {
@@ -146,7 +146,7 @@ void read_loco(void)
    int Erg;
 
    ReadFileName("Dateiname", LokFileName);
-   strcpy(FullName, Config.GetCfgVal(CFG_VALUE_LOCO_PATH));
+   strcpy(FullName, Config->GetCfgVal(CFG_VALUE_LOCO_PATH));
    if (FullName[strlen(FullName) - 1] != '/')
    {
       strcat(FullName, "/");
@@ -178,7 +178,7 @@ void write_loco(void)
    char Output[80];
 
    ReadFileName("Dateiname", LokFileName);
-   strcpy(FullName, Config.GetCfgVal(CFG_VALUE_LOCO_PATH));
+   strcpy(FullName, Config->GetCfgVal(CFG_VALUE_LOCO_PATH));
    if (FullName[strlen(FullName) - 1] != '/')
    {
       strcat(FullName, "/");
@@ -223,8 +223,8 @@ void chg_dir(void)
 {  char CfgFsPath[255];
 
    ReadFileName("SD Card Path", CfgFsPath);
-   Config.SetCfgVal(CFG_VALUE_LOCO_PATH, CfgFsPath);
-   Config.WriteIniconfig();
+   Config->SetCfgVal(CFG_VALUE_LOCO_PATH, CfgFsPath);
+   Config->WriteIniconfig();
    if (strcmp(CfgFsPath, "/") != 0)
    {
       if (!SD.exists(CfgFsPath))

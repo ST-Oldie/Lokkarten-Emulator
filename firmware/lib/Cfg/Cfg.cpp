@@ -29,12 +29,32 @@ void Cfg::ReadIniconfig(void)
             CfgValues[CFG_VALUE_PASSWORD] = strdup(buffer);
          else
             CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
+         if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_LOCAL_IP, buffer, sizeof(buffer)))
+            CfgValues[CFG_VALUE_LOCAL_IP] = strdup(buffer);
+         else
+            CfgValues[CFG_VALUE_LOCAL_IP] = (char *)NULL;
+         if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_GATEWAY_IP, buffer, sizeof(buffer)))
+            CfgValues[CFG_VALUE_GATEWAY_IP] = strdup(buffer);
+         else
+            CfgValues[CFG_VALUE_GATEWAY_IP] = (char *)NULL;
+         if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_SUBNET_MASK, buffer, sizeof(buffer)))
+            CfgValues[CFG_VALUE_SUBNET_MASK] = strdup(buffer);
+         else
+            CfgValues[CFG_VALUE_SUBNET_MASK] = (char *)NULL;
+         if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_DNS_IP, buffer, sizeof(buffer)))
+            CfgValues[CFG_VALUE_DNS_IP] = strdup(buffer);
+         else
+            CfgValues[CFG_VALUE_DNS_IP] = (char *)NULL;
       }
       else
       {
          CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
          CfgValues[CFG_VALUE_SSID] = (char *)NULL;
          CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
+         CfgValues[CFG_VALUE_LOCAL_IP] = (char *)NULL;
+         CfgValues[CFG_VALUE_GATEWAY_IP] = (char *)NULL;
+         CfgValues[CFG_VALUE_SUBNET_MASK] = (char *)NULL;
+         CfgValues[CFG_VALUE_DNS_IP] = (char *)NULL;
       }
       LcIni.close();
    }
@@ -43,6 +63,10 @@ void Cfg::ReadIniconfig(void)
       CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
       CfgValues[CFG_VALUE_SSID] = (char *)NULL;
       CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
+      CfgValues[CFG_VALUE_LOCAL_IP] = (char *)NULL;
+      CfgValues[CFG_VALUE_GATEWAY_IP] = (char *)NULL;
+      CfgValues[CFG_VALUE_SUBNET_MASK] = (char *)NULL;
+      CfgValues[CFG_VALUE_DNS_IP] = (char *)NULL;
    }
 }
 
@@ -57,6 +81,14 @@ void Cfg::WriteIniconfig(void)
       CfgFile.printf("%s=%s\n", CFG_VALUE_SSID, CfgValues[CFG_VALUE_SSID]);
    if (CfgValues[CFG_VALUE_PASSWORD] != (char *)NULL)
       CfgFile.printf("%s=%s\n", CFG_VALUE_PASSWORD, CfgValues[CFG_VALUE_PASSWORD]);
+   if (CfgValues[CFG_VALUE_LOCAL_IP] != (char *)NULL)
+      CfgFile.printf("%s=%s\n", CFG_VALUE_LOCAL_IP, CfgValues[CFG_VALUE_LOCAL_IP]);
+   if (CfgValues[CFG_VALUE_GATEWAY_IP] != (char *)NULL)
+      CfgFile.printf("%s=%s\n", CFG_VALUE_GATEWAY_IP, CfgValues[CFG_VALUE_GATEWAY_IP]);
+   if (CfgValues[CFG_VALUE_SUBNET_MASK] != (char *)NULL)
+      CfgFile.printf("%s=%s\n", CFG_VALUE_SUBNET_MASK, CfgValues[CFG_VALUE_SUBNET_MASK]);
+   if (CfgValues[CFG_VALUE_DNS_IP] != (char *)NULL)
+      CfgFile.printf("%s=%s\n", CFG_VALUE_DNS_IP, CfgValues[CFG_VALUE_DNS_IP]);
    CfgFile.close();
 }
 

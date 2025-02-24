@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <Cfg.h>
 
 /**
  * @defgroup LcWebServer web server class for LocoCard Emulator
@@ -16,15 +18,17 @@
 class LcWebServer
 {
    public:
-      LcWebServer();
+      LcWebServer(Cfg *ActualConfig) { Config = ActualConfig; WebServer = new ESP8266WebServer; };
       void Start(void);
-      String GetRequestGETParameter(void);
-      void SendHTMLPage(String HTMLPage);
-      String GetWebRequestHostAddress(void) { return WebRequestHostAddress; };
+      void SetUriCb(const Uri &uri, TrivialCB handler);
+      void HandleClient(void);
+      void HandleRootPage(void);
+      void HandleConfigPage(void);
+      void HandleLocoPage(void);
+      void HandleConfigGet(void);
    private:
-      WiFiClient Client;
-      WiFiServer *Server;
-      String WebRequestHostAddress;
+      ESP8266WebServer *WebServer;
+      Cfg *Config;
 };
 
 /** @} */

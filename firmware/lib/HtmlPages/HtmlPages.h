@@ -4,7 +4,8 @@
 #include <Arduino.h>
 #include <Cfg.h>
 
-String EncHTMLConfigValues(String TitleOfForm, Cfg& Config);
-int DecGETConfigValues(String GETParameter, Cfg& Config);
+String EncHTMLRootPage(String TitleOfForm);
+String EncHTMLConfigPage(String TitleOfForm, Cfg *Config);
+String EncHTMLLocoPage(String TitleOfForm, Cfg *Config);
 
 #endif

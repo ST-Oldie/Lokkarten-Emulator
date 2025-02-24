@@ -1,69 +1,128 @@
 #include <Arduino.h>
+#include <SD.h>
 #include <Cfg.h>
+
+static String HtmlHead(String TitleOfForm)
+{
+   return "<!DOCTYPE html><html><body><h1>" + TitleOfForm + "</h1><p>";
+}
+
+static String HtmlFooter(void)
+{
+   return "</body></html>";
+}
+
+String EncHTMLRootPage(String TitleOfForm)
+{
+   String HTMLPage = HtmlHead(TitleOfForm);
+   HTMLPage += "<ul>";
+   HTMLPage += "<li><a href=\"config.htm\"";
+   HTMLPage += "<li><a href=\"loco.htm\"";
+   HTMLPage += "</ul>";
+   HTMLPage += HtmlFooter();
+   return HTMLPage;
+}
 
 // Build a HTML page with a form which shows textboxes to enter the config values
 // returns the HTML code of the page
-String EncHTMLConfigValues(String TitleOfForm, Cfg& Config)
+String EncHTMLConfigPage(String TitleOfForm, Cfg *Config)
 {  String ConfigValue, TableRowHTML, StyleHTML;
 
-   // Head of the HTML page
-   String HTMLPage = "<!DOCTYPE html><html><body><h2>" + TitleOfForm + "</h2><form><table>";
+   String HTMLPage = HtmlHead(TitleOfForm);
+   StyleHTML = "<form action=/config_action><table>";
    // configuration values
    StyleHTML = " Style =\"background-color: #FFE4B5;\" " ;   // yellow
-   if (Config.GetCfgVal(CFG_VALUE_SSID) != (char *)NULL)
-      ConfigValue = Config.GetCfgVal(CFG_VALUE_SSID);
+   if (Config->GetCfgVal(CFG_VALUE_SSID) != (char *)NULL)
+      ConfigValue = Config->GetCfgVal(CFG_VALUE_SSID);
    else
       ConfigValue = "";
    TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
    HTMLPage += TableRowHTML;
-   if (Config.GetCfgVal(CFG_VALUE_PASSWORD) != (char *)NULL)
-      ConfigValue = Config.GetCfgVal(CFG_VALUE_PASSWORD);
+   if (Config->GetCfgVal(CFG_VALUE_PASSWORD) != (char *)NULL)
+      ConfigValue = Config->GetCfgVal(CFG_VALUE_PASSWORD);
+   else
+      ConfigValue = "";
+   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   HTMLPage += TableRowHTML;
+   if (Config->GetCfgVal(CFG_VALUE_LOCAL_IP) != (char *)NULL)
+      ConfigValue = Config->GetCfgVal(CFG_VALUE_LOCAL_IP);
+   else
+      ConfigValue = "";
+   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   HTMLPage += TableRowHTML;
+   if (Config->GetCfgVal(CFG_VALUE_GATEWAY_IP) != (char *)NULL)
+      ConfigValue = Config->GetCfgVal(CFG_VALUE_GATEWAY_IP);
+   else
+      ConfigValue = "";
+   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   HTMLPage += TableRowHTML;
+   if (Config->GetCfgVal(CFG_VALUE_SUBNET_MASK) != (char *)NULL)
+      ConfigValue = Config->GetCfgVal(CFG_VALUE_SUBNET_MASK);
+   else
+      ConfigValue = "";
+   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   HTMLPage += TableRowHTML;
+   if (Config->GetCfgVal(CFG_VALUE_DNS_IP) != (char *)NULL)
+      ConfigValue = Config->GetCfgVal(CFG_VALUE_DNS_IP);
    else
       ConfigValue = "";
    TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
    HTMLPage += TableRowHTML;
    // add the submit button
-   HTMLPage += "</table><br/><input type=\"submit\" value=\"Submit\" />";
-   // footer of the webpage
-   HTMLPage += "</form></body></html>";
+   HTMLPage += "</table><br/><input type=\"submit\" value=\"Submit\" /></form>";
+   HTMLPage += HtmlFooter();
    return HTMLPage;
 }
 
-// Decodes a GET parameter (expression after ? in URI (URI = expression entered in address field of webbrowser)), like "Country=Germany&City=Aachen"
-// and set the ConfigValues
-int DecGETConfigValues(String GETParameter, Cfg& Config)
-{  int posFirstCharToSearch, count;
+String printDirectory(File dir)
+{  String LocoList;
 
-   posFirstCharToSearch = 1;
-   count = 0;
-   // while a "&" is in the expression, after a start position to search
-   while (GETParameter.indexOf('&', posFirstCharToSearch) > -1)
+   LocoList = "<ul>";
+   while (true)
    {
-      int posOfSeparatorChar = GETParameter.indexOf('&', posFirstCharToSearch);  // position of & after start position
-      int posOfValueChar = GETParameter.indexOf('=', posFirstCharToSearch);      // position of = after start position
-      switch (count)
+      File entry =  dir.openNextFile();
+      if (!entry)
       {
-         case 0:
-            Config.SetCfgVal(CFG_VALUE_SSID, GETParameter.substring(posOfValueChar + 1, posOfSeparatorChar));
-            break;
-         case 1:
-            Config.SetCfgVal(CFG_VALUE_PASSWORD, GETParameter.substring(posOfValueChar + 1, posOfSeparatorChar));
-            break;
+         // no more files
+         break;
       }
-      posFirstCharToSearch = posOfSeparatorChar + 1;  // shift the start position to search after the &-char 
-      count++;
+      if (!entry.isDirectory())
+      {
+         LocoList += "<li>";
+         LocoList += entry.name();
+      }
+      entry.close();
    }
-   // no more & chars found
-   int posOfValueChar = GETParameter.indexOf('=', posFirstCharToSearch);       // search for =
-   switch (count)
+   LocoList += "</ul>";
+   return(LocoList);
+}
+
+File OpenLocoDir(Cfg *Config)
+{  char *Path;
+
+   Path = Config->GetCfgVal(CFG_VALUE_LOCO_PATH);
+   Serial.println(Path);
+   if (strcmp(Path, "/") != 0)
    {
-      case 0:
-         Config.SetCfgVal(CFG_VALUE_SSID, GETParameter.substring(posOfValueChar + 1, GETParameter.length()));
-         break;
-      case 1:
-         Config.SetCfgVal(CFG_VALUE_PASSWORD, GETParameter.substring(posOfValueChar + 1, GETParameter.length()));
-         break;
+      if (!SD.exists(Path))
+      {
+         SD.mkdir(Path);
+      }
    }
-   count++;
-   return count;
+   return(SD.open(Path));
+}
+
+String EncHTMLLocoPage(String TitleOfForm, Cfg *Config)
+{  File root;
+
+   String HTMLPage = HtmlHead(TitleOfForm);
+   root = OpenLocoDir(Config);
+   if (root)
+   {
+      HTMLPage += printDirectory(root);
+   }
+   else
+      HTMLPage += "no loco directory";
+   HTMLPage += HtmlFooter();
+   return HTMLPage;
 }
