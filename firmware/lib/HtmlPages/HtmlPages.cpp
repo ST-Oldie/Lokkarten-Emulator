@@ -16,8 +16,8 @@ String EncHTMLRootPage(String TitleOfForm)
 {
    String HTMLPage = HtmlHead(TitleOfForm);
    HTMLPage += "<ul>";
-   HTMLPage += "<li><a href=\"config.htm\"";
-   HTMLPage += "<li><a href=\"loco.htm\"";
+   HTMLPage += "<li><a href=\"config.htm\">Konfiguration</A>";
+   HTMLPage += "<li><a href=\"loco.htm\">Lokomotiven</A>";
    HTMLPage += "</ul>";
    HTMLPage += HtmlFooter();
    return HTMLPage;
@@ -26,47 +26,45 @@ String EncHTMLRootPage(String TitleOfForm)
 // Build a HTML page with a form which shows textboxes to enter the config values
 // returns the HTML code of the page
 String EncHTMLConfigPage(String TitleOfForm, Cfg *Config)
-{  String ConfigValue, TableRowHTML, StyleHTML;
+{  String ConfigValue, TableRowHTML;
 
    String HTMLPage = HtmlHead(TitleOfForm);
-   StyleHTML = "<form action=/config_action><table>";
-   // configuration values
-   StyleHTML = " Style =\"background-color: #FFE4B5;\" " ;   // yellow
+   HTMLPage += "<form action=/config_action><table>\n";
    if (Config->GetCfgVal(CFG_VALUE_SSID) != (char *)NULL)
       ConfigValue = Config->GetCfgVal(CFG_VALUE_SSID);
    else
       ConfigValue = "";
-   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   TableRowHTML = "<tr><th>SSID</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\"/></th></tr>\n";
    HTMLPage += TableRowHTML;
    if (Config->GetCfgVal(CFG_VALUE_PASSWORD) != (char *)NULL)
       ConfigValue = Config->GetCfgVal(CFG_VALUE_PASSWORD);
    else
       ConfigValue = "";
-   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   TableRowHTML = "<tr><th>Password</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\"></th></tr>\n";
    HTMLPage += TableRowHTML;
    if (Config->GetCfgVal(CFG_VALUE_LOCAL_IP) != (char *)NULL)
       ConfigValue = Config->GetCfgVal(CFG_VALUE_LOCAL_IP);
    else
       ConfigValue = "";
-   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   TableRowHTML = "<tr><th>IP</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\"></th></tr>\n";
    HTMLPage += TableRowHTML;
    if (Config->GetCfgVal(CFG_VALUE_GATEWAY_IP) != (char *)NULL)
       ConfigValue = Config->GetCfgVal(CFG_VALUE_GATEWAY_IP);
    else
       ConfigValue = "";
-   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   TableRowHTML = "<tr><th>Gateway</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\"></th></tr>\n";
    HTMLPage += TableRowHTML;
    if (Config->GetCfgVal(CFG_VALUE_SUBNET_MASK) != (char *)NULL)
       ConfigValue = Config->GetCfgVal(CFG_VALUE_SUBNET_MASK);
    else
       ConfigValue = "";
-   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   TableRowHTML = "<tr><th>Netmask</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\"></th></tr>\n";
    HTMLPage += TableRowHTML;
    if (Config->GetCfgVal(CFG_VALUE_DNS_IP) != (char *)NULL)
       ConfigValue = Config->GetCfgVal(CFG_VALUE_DNS_IP);
    else
       ConfigValue = "";
-   TableRowHTML = "<tr><th>" + ConfigValue + "</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\" " + StyleHTML + " /></th></tr>";
+   TableRowHTML = "<tr><th>DNS</th><th><input name=\"" + ConfigValue + "\" value=\"" + ConfigValue + "\"></th></tr>\n";
    HTMLPage += TableRowHTML;
    // add the submit button
    HTMLPage += "</table><br/><input type=\"submit\" value=\"Submit\" /></form>";
