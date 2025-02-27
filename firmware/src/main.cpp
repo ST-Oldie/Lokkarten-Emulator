@@ -64,6 +64,7 @@ void setup(void)
 #else
    Serial.begin(115200);
    Serial.print("create wifi");
+   SD.begin(SPI_CS);
    WifiClientServer = new LcWifi(Config);
    Serial.print("create web");
    WifiWebServer = new LcWebServer(Config);
