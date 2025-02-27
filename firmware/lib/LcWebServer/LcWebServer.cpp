@@ -48,7 +48,9 @@ void LcWebServer::HandleConfigGet(void)
    Config->SetCfgVal(CFG_VALUE_GATEWAY_IP, WebServer->arg(3));
    Config->SetCfgVal(CFG_VALUE_SUBNET_MASK, WebServer->arg(4));
    Config->SetCfgVal(CFG_VALUE_DNS_IP, WebServer->arg(5));
+   Config->SetCfgVal(CFG_VALUE_LOCO_PATH, WebServer->arg(6));
    Config->WriteIniconfig();
+   WebServer->send(200, "text/html", EncHTMLRootPage("Lococard"));
 }
 
 /** @} */
