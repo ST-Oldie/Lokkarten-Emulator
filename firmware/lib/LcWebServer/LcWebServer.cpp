@@ -39,6 +39,11 @@ void LcWebServer::HandleLocoPage(void)
    WebServer->send(200, "text/html", EncHTMLLocoPage("Lococard Locos", Config));
 }
 
+void LcWebServer::HandleEmptyPage(void)
+{
+   WebServer->send(200, "text/html", EncHTMLEmptyPage("Lococard Empty"));
+}
+
 void LcWebServer::HandleConfigGet(void)
 {  String FormValue;
 
@@ -50,6 +55,21 @@ void LcWebServer::HandleConfigGet(void)
    Config->SetCfgVal(CFG_VALUE_DNS_IP, WebServer->arg(5));
    Config->SetCfgVal(CFG_VALUE_LOCO_PATH, WebServer->arg(6));
    Config->WriteIniconfig();
+   WebServer->send(200, "text/html", EncHTMLRootPage("Lococard"));
+}
+
+void LcWebServer::HandleLoco2Card(void)
+{
+   WebServer->send(200, "text/html", EncHTMLRemoveCard("Lococard"));
+}
+
+void LcWebServer::HandleRemCard(void)
+{
+   WebServer->send(200, "text/html", EncHTMLRootPage("Lococard"));
+}
+
+void LcWebServer::HandleSaveCard(void)
+{
    WebServer->send(200, "text/html", EncHTMLRootPage("Lococard"));
 }
 

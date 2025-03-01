@@ -7,5 +7,7 @@
 String EncHTMLRootPage(String TitleOfForm);
 String EncHTMLConfigPage(String TitleOfForm, Cfg *Config);
 String EncHTMLLocoPage(String TitleOfForm, Cfg *Config);
+String EncHTMLEmptyPage(String TitleOfForm);
+String EncHTMLRemoveCard(String TitleOfForm);
 
 #endif

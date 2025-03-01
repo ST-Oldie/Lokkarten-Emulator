@@ -17,7 +17,8 @@ String EncHTMLRootPage(String TitleOfForm)
    String HTMLPage = HtmlHead(TitleOfForm);
    HTMLPage += "<ul>";
    HTMLPage += "<li><a href=\"config.htm\">Konfiguration</A>";
-   HTMLPage += "<li><a href=\"loco.htm\">Lokomotiven</A>";
+   HTMLPage += "<li><a href=\"loco.htm\">Liste der Lokomotiven</A>";
+   HTMLPage += "<li><a href=\"empty.htm\">Leere Lococard einlegen</A>";
    HTMLPage += "</ul>";
    HTMLPage += HtmlFooter();
    return HTMLPage;
@@ -75,7 +76,7 @@ String EncHTMLConfigPage(String TitleOfForm, Cfg *Config)
    TableRowHTML = "<tr><th>Pfad</th><td><input name=\"Pfad\" value=\"" + ConfigValue + "\"></td></tr>\n";
    HTMLPage += TableRowHTML;
    // add the submit button
-   HTMLPage += "</table><br/><input type=\"submit\" value=\"Submit\" /></form>";
+   HTMLPage += "</table><br><button type=\"submit\" value=\"Submit\">ok</button></form>";
    HTMLPage += HtmlFooter();
    return HTMLPage;
 }
@@ -83,7 +84,7 @@ String EncHTMLConfigPage(String TitleOfForm, Cfg *Config)
 String printDirectory(File dir)
 {  String LocoList;
 
-   LocoList = "<ul>";
+   LocoList = "<form action=/insert_loco><ul>";
    while (true)
    {
       File entry =  dir.openNextFile();
@@ -94,12 +95,20 @@ String printDirectory(File dir)
       }
       if (!entry.isDirectory())
       {
-         LocoList += "<li>";
+         LocoList += "<input type=\"radio\" id=\"";
          LocoList += entry.name();
+         LocoList += "\" name=\"loco\" value=\"";
+         LocoList += entry.name();
+         LocoList += "\">";
+         LocoList += "<label for=\"";
+         LocoList += entry.name();
+         LocoList += "\">";
+         LocoList += entry.name();
+         LocoList += "</label><br>";
       }
       entry.close();
    }
-   LocoList += "</ul>";
+   LocoList += "</ul><br><button type=\"submit\" value=\"Submit\">Insert</buttpn></form>";
    return(LocoList);
 }
 
@@ -129,6 +138,24 @@ String EncHTMLLocoPage(String TitleOfForm, Cfg *Config)
    }
    else
       HTMLPage += "no loco directory";
+   HTMLPage += HtmlFooter();
+   return HTMLPage;
+}
+
+String EncHTMLEmptyPage(String TitleOfForm)
+{
+   String HTMLPage = HtmlHead(TitleOfForm);
+   HTMLPage += "<form action=/save_loco>";
+   HTMLPage += "Locofile Name: <input name=\"name\" value=\"\"><br>\n";
+   HTMLPage += "<button type=\"submit\" value=\"Submit\">Save Lococard</button></form>";
+   HTMLPage += HtmlFooter();
+   return HTMLPage;
+}
+
+String EncHTMLRemoveCard(String TitleOfForm)
+{
+   String HTMLPage = HtmlHead(TitleOfForm);
+   HTMLPage += "<form action=/rem_loco><button type=\"submit\" value=\"Submit\">Remove Lococard</button></form>";
    HTMLPage += HtmlFooter();
    return HTMLPage;
 }

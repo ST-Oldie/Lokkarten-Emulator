@@ -25,7 +25,11 @@ class LcWebServer
       void HandleRootPage(void);
       void HandleConfigPage(void);
       void HandleLocoPage(void);
+      void HandleEmptyPage(void);
       void HandleConfigGet(void);
+      void HandleLoco2Card(void);
+      void HandleRemCard(void);
+      void HandleSaveCard(void);
    private:
       ESP8266WebServer *WebServer;
       Cfg *Config;

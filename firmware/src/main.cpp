@@ -49,9 +49,29 @@ void LcHandleLocoPage()
    WifiWebServer->HandleLocoPage();
 }
 
+void LcHandleEmptyPage()
+{
+   WifiWebServer->HandleEmptyPage();
+}
+
 void LcHandleConfigGet()
 {
    WifiWebServer->HandleConfigGet();
+}
+
+void LcHandleLoco2Card()
+{
+   WifiWebServer->HandleLoco2Card();
+}
+
+void LcHandleRemCard()
+{
+   WifiWebServer->HandleRemCard();
+}
+
+void LcHandleSaveCard()
+{
+   WifiWebServer->HandleSaveCard();
 }
 #endif
 
@@ -59,12 +79,12 @@ void setup(void)
 {
    Config = new Cfg;
    Config->ReadIniconfig();
+   SD.begin(SPI_CS);
 #ifdef TEST_BASIC
    test_basic_setup();
 #else
    Serial.begin(115200);
    Serial.print("create wifi");
-   SD.begin(SPI_CS);
    WifiClientServer = new LcWifi(Config);
    Serial.print("create web");
    WifiWebServer = new LcWebServer(Config);
@@ -74,7 +94,11 @@ void setup(void)
    WifiWebServer->SetUriCb((const char *)"/", LcHandleRootPage);
    WifiWebServer->SetUriCb((const char *)"/config.htm", LcHandleConfigPage);
    WifiWebServer->SetUriCb((const char *)"/loco.htm", LcHandleLocoPage);
+   WifiWebServer->SetUriCb((const char *)"/empty.htm", LcHandleEmptyPage);
    WifiWebServer->SetUriCb((const char *)"/config_action", LcHandleConfigGet);
+   WifiWebServer->SetUriCb((const char *)"/insert_loco", LcHandleLoco2Card);
+   WifiWebServer->SetUriCb((const char *)"/rem_loco", LcHandleRemCard);
+   WifiWebServer->SetUriCb((const char *)"/save_loco", LcHandleSaveCard);
    Serial.print("start web");
    WifiWebServer->Start();
    Serial.print("setup ready");
