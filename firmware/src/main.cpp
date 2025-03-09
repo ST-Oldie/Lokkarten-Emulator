@@ -26,6 +26,7 @@
 #ifdef TEST_BASIC
 LocoSet LokSatz;
 LocoCard VirtLokKarte;
+Loco Lokomotive;
 #endif
 Cfg *Config;
 LcWifi *WifiClientServer;
@@ -77,20 +78,18 @@ void LcHandleSaveCard()
 
 void setup(void)
 {
+   SD.begin(SPI_CS);
    Config = new Cfg;
    Config->ReadIniconfig();
-   SD.begin(SPI_CS);
 #ifdef TEST_BASIC
    test_basic_setup();
 #else
+#ifdef DEBUG_OUTPUT
    Serial.begin(115200);
-   Serial.print("create wifi");
+#endif
    WifiClientServer = new LcWifi(Config);
-   Serial.print("create web");
    WifiWebServer = new LcWebServer(Config);
-   Serial.print("start wifi");
    WifiClientServer->Start();
-   Serial.print("set web cb");
    WifiWebServer->SetUriCb((const char *)"/", LcHandleRootPage);
    WifiWebServer->SetUriCb((const char *)"/config.htm", LcHandleConfigPage);
    WifiWebServer->SetUriCb((const char *)"/loco.htm", LcHandleLocoPage);
@@ -99,9 +98,10 @@ void setup(void)
    WifiWebServer->SetUriCb((const char *)"/insert_loco", LcHandleLoco2Card);
    WifiWebServer->SetUriCb((const char *)"/rem_loco", LcHandleRemCard);
    WifiWebServer->SetUriCb((const char *)"/save_loco", LcHandleSaveCard);
-   Serial.print("start web");
    WifiWebServer->Start();
-   Serial.print("setup ready");
+#ifdef DEBUG_OUTPUT
+   Serial.println("System ready");
+#endif
 #endif
 }
 
