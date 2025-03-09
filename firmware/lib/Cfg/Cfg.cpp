@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <stdlib.h>
 #include <string.h>
 #include <IniFile.h>
@@ -20,7 +21,12 @@ void Cfg::ReadIniconfig(void)
          if (LcIni.getValue(CFG_SECTION_LOCOCARD, CFG_VALUE_LOCO_PATH, buffer, sizeof(buffer)))
             CfgValues[CFG_VALUE_LOCO_PATH] = strdup(buffer);
          else
+         {
+#ifdef DEBUG_OUTPUT
+            Serial.println("ERROR can not read loco path");
+#endif
             CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
+         }
          if (LcIni.getValue(CFG_SECTION_WLAN, CFG_VALUE_SSID, buffer, sizeof(buffer)))
             CfgValues[CFG_VALUE_SSID] = strdup(buffer);
          else
@@ -48,6 +54,9 @@ void Cfg::ReadIniconfig(void)
       }
       else
       {
+#ifdef DEBUG_OUTPUT
+         Serial.println("ERROR validate ini file");
+#endif
          CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
          CfgValues[CFG_VALUE_SSID] = (char *)NULL;
          CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
@@ -60,7 +69,10 @@ void Cfg::ReadIniconfig(void)
    }
    else
    {
-      CfgValues[CFG_VALUE_LOCO_PATH] = strdup(DEV_CFG_VALUE_LOCO_PATH);
+#ifdef DEBUG_OUTPUT
+      Serial.println("ERROR open ini file");
+#endif
+      CfgValues[CFG_VALUE_LOCO_PATH] = (char *)NULL;
       CfgValues[CFG_VALUE_SSID] = (char *)NULL;
       CfgValues[CFG_VALUE_PASSWORD] = (char *)NULL;
       CfgValues[CFG_VALUE_LOCAL_IP] = (char *)NULL;
@@ -73,22 +85,23 @@ void Cfg::ReadIniconfig(void)
 void Cfg::WriteIniconfig(void)
 {  fs::File CfgFile;
 
+   SD.remove(INI_FILE_NAME);
    CfgFile = SD.open(INI_FILE_NAME, FILE_WRITE);
-   CfgFile.printf("[%s]\n", CFG_SECTION_LOCOCARD);
-   CfgFile.printf("%s=%s\n", CFG_VALUE_LOCO_PATH, CfgValues[CFG_VALUE_LOCO_PATH]);
-   CfgFile.printf("[%s]\n", CFG_SECTION_WLAN);
+   CfgFile.printf("[%s]\n\r", CFG_SECTION_LOCOCARD);
+   CfgFile.printf("%s=%s\n\r", CFG_VALUE_LOCO_PATH, CfgValues[CFG_VALUE_LOCO_PATH]);
+   CfgFile.printf("[%s]\n\r", CFG_SECTION_WLAN);
    if (CfgValues[CFG_VALUE_SSID] != (char *)NULL)
-      CfgFile.printf("%s=%s\n", CFG_VALUE_SSID, CfgValues[CFG_VALUE_SSID]);
+      CfgFile.printf("%s=%s\n\r", CFG_VALUE_SSID, CfgValues[CFG_VALUE_SSID]);
    if (CfgValues[CFG_VALUE_PASSWORD] != (char *)NULL)
-      CfgFile.printf("%s=%s\n", CFG_VALUE_PASSWORD, CfgValues[CFG_VALUE_PASSWORD]);
+      CfgFile.printf("%s=%s\n\r", CFG_VALUE_PASSWORD, CfgValues[CFG_VALUE_PASSWORD]);
    if (CfgValues[CFG_VALUE_LOCAL_IP] != (char *)NULL)
-      CfgFile.printf("%s=%s\n", CFG_VALUE_LOCAL_IP, CfgValues[CFG_VALUE_LOCAL_IP]);
+      CfgFile.printf("%s=%s\n\r", CFG_VALUE_LOCAL_IP, CfgValues[CFG_VALUE_LOCAL_IP]);
    if (CfgValues[CFG_VALUE_GATEWAY_IP] != (char *)NULL)
-      CfgFile.printf("%s=%s\n", CFG_VALUE_GATEWAY_IP, CfgValues[CFG_VALUE_GATEWAY_IP]);
+      CfgFile.printf("%s=%s\n\r", CFG_VALUE_GATEWAY_IP, CfgValues[CFG_VALUE_GATEWAY_IP]);
    if (CfgValues[CFG_VALUE_SUBNET_MASK] != (char *)NULL)
-      CfgFile.printf("%s=%s\n", CFG_VALUE_SUBNET_MASK, CfgValues[CFG_VALUE_SUBNET_MASK]);
+      CfgFile.printf("%s=%s\n\r", CFG_VALUE_SUBNET_MASK, CfgValues[CFG_VALUE_SUBNET_MASK]);
    if (CfgValues[CFG_VALUE_DNS_IP] != (char *)NULL)
-      CfgFile.printf("%s=%s\n", CFG_VALUE_DNS_IP, CfgValues[CFG_VALUE_DNS_IP]);
+      CfgFile.printf("%s=%s\n\r", CFG_VALUE_DNS_IP, CfgValues[CFG_VALUE_DNS_IP]);
    CfgFile.close();
 }
 
