@@ -1,0 +1,23 @@
+<HTML>
+   <HEAD>
+      <TITLE>Hinzuf&uuml;gen eines neuen Formlars</TITLE>
+   </HEAD>
+   <BODY>
+      <H1>Hinzuf&uuml;gen eines neuen Formlars</H1>
+      <P>
+      Um eine neues Formular zu integrieren, mu&szlig; nat&uuml;rlich zuerst eine
+      neue Webseite integriert weren. Siehe dazu
+      <A HREF="add_html.htm">Hinzuf&uuml;gen einer neuen HTML Seite</A>.
+      Danach mu&szlig ein Handler f&uuml;r den Submit Button angelegt werden:
+      <P>
+      <OL>
+         <LI>In der Klasse LcWebServer eine neue Methode anlegen, die über die
+             WebServer Klasse die Eingaben des Formulars bearbeitet und zum
+             Schlu&szlig; &uuml;ber die WebServer Klasse den Quelltext einer
+             neuen Seite an den Browser sendet
+         <LI>In main.cpp eine neue Funktion algene, die die neue Methoode aus der
+             Klasse LcWebServer aufruft.
+         <LI>Die neue Funktion als Callback f&uuml;r die neue URL anmelden.
+      </OL>
+   </BODY>
+</HTML>
