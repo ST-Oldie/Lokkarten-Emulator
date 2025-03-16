@@ -4,7 +4,10 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <map>
 #include <Cfg.h>
+#include <loco.h>
+#include <LocoCard.h>
 
 /**
  * @defgroup LcWebServer web server class for LocoCard Emulator
@@ -18,7 +21,7 @@
 class LcWebServer
 {
    public:
-      LcWebServer(Cfg *ActualConfig) { Config = ActualConfig; WebServer = new ESP8266WebServer; };
+      LcWebServer(Cfg *ActualConfig);
       void Start(void);
       void SetUriCb(const Uri &uri, TrivialCB handler);
       void HandleClient(void);
@@ -32,7 +35,10 @@ class LcWebServer
       void HandleSaveCard(void);
    private:
       ESP8266WebServer *WebServer;
+      Loco Lokomotive;
+      LocoCard VirtLokKarte;
       Cfg *Config;
+      std::map<int, char *> FileNames;
 };
 
 /** @} */

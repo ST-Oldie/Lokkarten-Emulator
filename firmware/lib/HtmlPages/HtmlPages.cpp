@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <SD.h>
+#include <set>
 #include <Cfg.h>
 
 static String HtmlHead(String TitleOfForm)
@@ -81,63 +82,26 @@ String EncHTMLConfigPage(String TitleOfForm, Cfg *Config)
    return HTMLPage;
 }
 
-String printDirectory(File dir)
-{  String LocoList;
-
-   LocoList = "<form action=/insert_loco><ul>";
-   while (true)
-   {
-      File entry =  dir.openNextFile();
-      if (!entry)
-      {
-         // no more files
-         break;
-      }
-      if (!entry.isDirectory())
-      {
-         LocoList += "<input type=\"radio\" id=\"";
-         LocoList += entry.name();
-         LocoList += "\" name=\"loco\" value=\"";
-         LocoList += entry.name();
-         LocoList += "\">";
-         LocoList += "<label for=\"";
-         LocoList += entry.name();
-         LocoList += "\">";
-         LocoList += entry.name();
-         LocoList += "</label><br>";
-      }
-      entry.close();
-   }
-   LocoList += "</ul><br><button type=\"submit\" value=\"Submit\">Insert</buttpn></form>";
-   return(LocoList);
-}
-
-File OpenLocoDir(Cfg *Config)
-{  char *Path;
-
-   Path = Config->GetCfgVal(CFG_VALUE_LOCO_PATH);
-   Serial.println(Path);
-   if (strcmp(Path, "/") != 0)
-   {
-      if (!SD.exists(Path))
-      {
-         SD.mkdir(Path);
-      }
-   }
-   return(SD.open(Path));
-}
-
-String EncHTMLLocoPage(String TitleOfForm, Cfg *Config)
+String EncHTMLLocoPage(String TitleOfForm, std::map<int, char *> &FileNames)
 {  File root;
+   unsigned int i;
 
    String HTMLPage = HtmlHead(TitleOfForm);
-   root = OpenLocoDir(Config);
-   if (root)
+   HTMLPage += "<form action=/insert_loco><ul>";
+   for (i = 0; i < FileNames.size(); i++)
    {
-      HTMLPage += printDirectory(root);
+      HTMLPage += "<input type=\"radio\" id=\"";
+      HTMLPage += FileNames[i];
+      HTMLPage += "\" name=\"loco\" value=\"";
+      HTMLPage += FileNames[i];
+      HTMLPage += "\">";
+      HTMLPage += "<label for=\"";
+      HTMLPage += FileNames[i];
+      HTMLPage += "\">";
+      HTMLPage += FileNames[i];
+      HTMLPage += "</label><br>";
    }
-   else
-      HTMLPage += "no loco directory";
+   HTMLPage += "</ul><br><button type=\"submit\" value=\"Submit\">Insert</buttpn></form>";
    HTMLPage += HtmlFooter();
    return HTMLPage;
 }
