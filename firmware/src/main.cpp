@@ -6,6 +6,7 @@
 #include <Cfg.h>
 #include <LcWifi.h>
 #include <LcWebServer.h>
+#include <LcWebSockets.h>
 
 /* define fuer Test der Basisklassen fuer Lok, Lokliste, ... */
 //#define TEST_BASIC
@@ -31,6 +32,7 @@ Loco Lokomotive;
 Cfg *Config;
 LcWifi *WifiClientServer;
 LcWebServer *WifiWebServer;
+LcWebSockets *WifiWebSocketServer;
 
 #ifdef TEST_BASIC
 #include "test_basic.h"
@@ -99,6 +101,7 @@ void setup(void)
    WifiWebServer->SetUriCb((const char *)"/rem_loco", LcHandleRemCard);
    WifiWebServer->SetUriCb((const char *)"/save_loco", LcHandleSaveCard);
    WifiWebServer->Start();
+   WifiWebSocketServer = new LcWebSockets();
 #ifdef DEBUG_OUTPUT
    Serial.println("System ready");
 #endif
