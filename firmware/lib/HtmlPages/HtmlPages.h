@@ -10,5 +10,6 @@ String EncHTMLConfigPage(String TitleOfForm, Cfg *Config);
 String EncHTMLLocoPage(String TitleOfForm, std::map<int, char *> &FileNames);
 String EncHTMLEmptyPage(String TitleOfForm);
 String EncHTMLRemoveCard(String TitleOfForm);
+String EncHTMLNameSelectorPage(String TitleOfForm, std::vector<String> names);
 
 #endif

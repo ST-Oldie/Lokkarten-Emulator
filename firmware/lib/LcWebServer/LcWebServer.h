@@ -29,6 +29,7 @@ class LcWebServer
       void HandleConfigPage(void);
       void HandleLocoPage(void);
       void HandleEmptyPage(void);
+      void HandleSetPage(void);
       void HandleConfigGet(void);
       void HandleLoco2Card(void);
       void HandleRemCard(void);

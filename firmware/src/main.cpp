@@ -57,6 +57,11 @@ void LcHandleEmptyPage()
    WifiWebServer->HandleEmptyPage();
 }
 
+void LcHandleSetPage()
+{
+   WifiWebServer->HandleSetPage();
+}
+
 void LcHandleConfigGet()
 {
    WifiWebServer->HandleConfigGet();
@@ -96,6 +101,7 @@ void setup(void)
    WifiWebServer->SetUriCb((const char *)"/config.htm", LcHandleConfigPage);
    WifiWebServer->SetUriCb((const char *)"/loco.htm", LcHandleLocoPage);
    WifiWebServer->SetUriCb((const char *)"/empty.htm", LcHandleEmptyPage);
+   WifiWebServer->SetUriCb((const char *)"/set.htm", LcHandleSetPage);
    WifiWebServer->SetUriCb((const char *)"/config_action", LcHandleConfigGet);
    WifiWebServer->SetUriCb((const char *)"/insert_loco", LcHandleLoco2Card);
    WifiWebServer->SetUriCb((const char *)"/rem_loco", LcHandleRemCard);

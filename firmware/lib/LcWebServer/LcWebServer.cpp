@@ -101,6 +101,23 @@ void LcWebServer::HandleEmptyPage(void)
    WebServer->send(200, "text/html", EncHTMLEmptyPage("Lococard Empty"));
 }
 
+void LcWebServer::HandleSetPage(void)
+{  std::vector<String> Locos;
+   File root;
+   unsigned int i;
+
+   root = OpenLocoDir(Config);
+   if (root)
+   {
+      GetLocos(root, FileNames);
+   }
+   for (i = 0; i < FileNames.size(); i++)
+   {
+      Locos.push_back(FileNames[i]);
+   }
+   WebServer->send(200, "text/html", EncHTMLNameSelectorPage("lococard set", Locos));
+}
+
 void LcWebServer::HandleConfigGet(void)
 {  String FormValue;
 
